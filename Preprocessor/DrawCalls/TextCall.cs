@@ -30,8 +30,8 @@ public sealed record TextOptions (
 
 public sealed record DrawCallText (
   string Text,
-  int X,
-  int Y,
+  float X,
+  float Y,
   TextCase Casing = TextCase.Normal,
   TextOptions? options = null
 ): DrawCall;
