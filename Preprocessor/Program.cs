@@ -24,7 +24,12 @@ static void DoSomething(XmlNode n, int level = 0)
 {
     if (n is XmlElementNode eNode)
     {
-        Console.WriteLine(eNode.TagName.PadLeft(level));
+        Console.Write("<".PadLeft(level));
+        Console.Write(eNode.TagName);
+        foreach(var attrib in eNode.Attributes) {
+            Console.Write($" {attrib.Name}={attrib.Value}");
+        }
+        Console.WriteLine(">");
         foreach (var child in eNode.Children)
         {
             DoSomething(child, level + 2);

@@ -15,6 +15,17 @@ public static class XmlParser
     return root;
   }
 
+  private static void AppendAttributes(XmlReader reader, List<XmlAttribute> attributes)
+  {
+    if (!reader.HasAttributes) return;
+
+    while (reader.MoveToNextAttribute())
+    {
+      attributes.Add(new XmlAttribute(reader.Name, reader.Value));
+    }
+    reader.MoveToElement();
+  }
+
   private static void TraverseDFS(XmlReader reader, XmlElementNode parent)
   {
     while (reader.Read())
@@ -25,15 +36,7 @@ public static class XmlParser
           {
             var newElmement = new XmlElementNode(reader.Name, [], []);
             parent.Children.Add(newElmement);
-            if (reader.HasAttributes)
-            {
-              while (reader.MoveToNextAttribute())
-              {
-                Console.WriteLine($" {reader.Name}={reader.Value}");
-              }
-              reader.MoveToElement();
-              Console.WriteLine();
-            }
+            AppendAttributes(reader, newElmement.Attributes);
             if (!reader.IsEmptyElement)
             {
               TraverseDFS(reader, newElmement);
