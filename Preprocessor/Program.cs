@@ -17,4 +17,5 @@ renderer.Render(instructions);
 var stream = File.Create("test.pdf");
 renderer.Save(stream);
 stream.Close();
+// tada
 stream.Dispose();
