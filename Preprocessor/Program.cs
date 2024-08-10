@@ -1,5 +1,7 @@
-﻿using Preprocessor;
+﻿using System.Diagnostics;
+using Preprocessor;
 using Preprocessor.DrawCall;
+using Preprocessor.Parser;
 
 var instructions = new List<DrawCall>
 {
@@ -13,6 +15,10 @@ var instructions = new List<DrawCall>
 
 var renderer = new PDFRenderer();
 renderer.Render(instructions);
+
+Console.WriteLine(Environment.CurrentDirectory);
+var filePath = Path.Join("Preprocessor", "template", "investment.svg");
+var rootNode = XmlParser.Parse(filePath);
 
 var stream = File.Create("test.pdf");
 renderer.Save(stream);
