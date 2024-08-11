@@ -10,6 +10,8 @@ public class XmlVisitor : IXmlVisitor
 
   private readonly List<DrawCall.DrawCall> calls = [];
 
+  public List<DrawCall.DrawCall> DrawCalls { get => calls; }
+
   public void VisitRect(XmlElementNode rect)
   {
   }

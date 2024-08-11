@@ -10,8 +10,8 @@ public class XmlTraversal
 
   public XmlTraversal(IXmlVisitor visitor)
   {
-     _visitor = visitor;
-     contextStack.Push(new ());
+    _visitor = visitor;
+    contextStack.Push(new());
   }
 
   public void Visit(XmlNode node)
@@ -37,6 +37,9 @@ public class XmlTraversal
     contextStack.Push(newContext);
     switch (tag)
     {
+      case "root":
+        _visitor.VisitRoot(n);
+        break;
       case SvgTags.Text:
         _visitor.VisitText(n);
         break;

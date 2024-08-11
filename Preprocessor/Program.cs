@@ -1,24 +1,19 @@
-﻿using System.Diagnostics;
-using Preprocessor;
-using Preprocessor.DrawCall;
+﻿using Preprocessor;
 using Preprocessor.Parser;
-
-var instructions = new List<DrawCall>
-{
-    new PageCall(),
-    new DrawCallText("Fuck the police", 200, 300),
-    new DrawCallText("Love and Peace", 200, 500),
-    new PageCall(),
-    new DrawCallText("Gosth in theEhhhhhh shell", 200, 300),
-    new DrawCallText("ehhhhhhh!", 200, 500),
-};
-
-var renderer = new PDFRenderer();
-renderer.Render(instructions);
+using Preprocessor.Process;
 
 Console.WriteLine(Environment.CurrentDirectory);
 var filePath = Path.Join("Preprocessor", "template", "investment.svg");
 var rootNode = XmlParser.Parse(filePath);
+
+var visitor = new XmlVisitor();
+var traversal = new XmlTraversal(visitor);
+
+traversal.Visit(rootNode);
+
+var instructions = visitor.DrawCalls;
+var renderer = new PDFRenderer();
+renderer.Render(instructions);
 
 static void DoSomething(XmlNode n, int level = 0)
 {
@@ -41,8 +36,6 @@ static void DoSomething(XmlNode n, int level = 0)
         Console.WriteLine(tNode.Text.PadLeft(level + 1));
     }
 }
-
-DoSomething(rootNode.Children[0]);
 
 var stream = File.Create("test.pdf");
 renderer.Save(stream);
