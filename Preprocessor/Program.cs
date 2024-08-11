@@ -1,9 +1,12 @@
 ﻿using Preprocessor;
+using Preprocessor.Font;
 using Preprocessor.Parser;
 using Preprocessor.Process;
 
+PdfSharp.Fonts.GlobalFontSettings.FontResolver = new FontFinder();
+
 Console.WriteLine(Environment.CurrentDirectory);
-var filePath = Path.Join("Preprocessor", "template", "investment.svg");
+var filePath = Path.Join("template", "investment.svg");
 var rootNode = XmlParser.Parse(filePath);
 
 var visitor = new XmlVisitor();

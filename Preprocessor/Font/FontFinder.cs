@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using PdfSharp.Fonts;
+
 namespace Preprocessor.Font;
 
 public enum FontWeight
@@ -13,7 +16,7 @@ public enum FontWeight
     Black = 900,
 }
 
-public sealed class FontFinder
+public sealed class FontFinder: IFontResolver
 {
     const string GoogleFontItalicName = "Italic";
 
@@ -39,4 +42,21 @@ public sealed class FontFinder
         (int)FontWeight.Black => FontWeight.Black,
         _ => FontWeight.Regular,
     };
+
+    private static string NormalizeName(string name) {
+        if (string.Equals(name, "Poppins")) return "Poppins";
+        return "Poppins";
+    }
+
+    public FontResolverInfo ResolveTypeface(string familyName, bool bold, bool italic)
+    {
+        return new FontResolverInfo("Poppins");
+    }
+
+    public byte[] GetFont(string faceName)
+    {
+        Debug.WriteLine(faceName);
+        var file = File.ReadAllBytes(Path.Join("fonts", "Poppins", "Poppins-Regular.ttf"));
+        return file;
+    }
 }

@@ -41,7 +41,17 @@ public sealed class PDFRenderer
     }
 
     public void RenderText(DrawCallText tc) {
-        var font = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
+        var style = ComputeStyle(false, false);
+        var font = new XFont("Poppins", tc.Size, style);
+
         g.DrawString(tc.Text, font, XBrushes.Black, tc.X, tc.Y);
+    }
+
+    public static XFontStyleEx ComputeStyle(bool bold, bool italic) {
+        if (bold && italic) return XFontStyleEx.BoldItalic;
+        if(bold) return XFontStyleEx.Bold;
+        if(italic) return XFontStyleEx.Italic;
+
+        return XFontStyleEx.Regular; 
     }
 }
