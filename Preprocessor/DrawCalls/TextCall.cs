@@ -32,6 +32,10 @@ public sealed record DrawCallText (
   string Text,
   float X,
   float Y,
+  string Color,
+  float Size,
+  int Weight,
+  string FontFace,
   TextCase Casing = TextCase.Normal,
   TextOptions? options = null
 ): DrawCall;

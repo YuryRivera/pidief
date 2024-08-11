@@ -1,6 +1,4 @@
-using PdfSharp;
-using PdfSharp.Pdf;
-using Preprocessor.DrawCall;
+namespace Preprocessor.DrawCall;
 
 public enum PageOrientation
 {

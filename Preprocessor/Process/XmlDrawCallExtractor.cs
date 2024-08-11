@@ -1,5 +1,6 @@
 using Preprocessor.DrawCall;
 using Preprocessor.Parser;
+using Preprocessor.Render;
 
 namespace Preprocessor.Process;
 
@@ -9,6 +10,7 @@ public static class SvgTags
     public const string Text = "text";
     public const string Tspan = "tspan";
     public const string G = "g";
+    public const string Rect = "rect";
 }
 
 public static class SvgAttribs
@@ -25,45 +27,75 @@ public static class SvgAttribs
     public const string Id = "id";
 }
 
-public sealed class XmlDrawCallExtractor
+public static class XmlDrawCallExtractor
 {
 
-    public static DrawCallText ExtracTextCall(XmlElementNode node)
+    public static PropertyContextArgs ExtractProperties(XmlElementNode node)
     {
-        float x = 0;
+        int? weight = null;
+        float? x = null;
         float y = 0;
-        int weight = 400;
-        string fontFamily = string.Empty;
-        string text = string.Empty;
-        string fillColor = "#000";
-        float fontSize = 12;
+        float fontSize = 0;
+        string? fillColor = null;
+        string? fontFamily = null;
 
-        foreach (var (Name, Value) in node.Attributes)
+        foreach (var attrib in node.Attributes)
         {
-            var attribName = Name.ToLower();
+            var attribName = attrib.Name.ToLower();
+            string? value = attrib.Value;
+
+            switch (attribName)
+            {
+                case SvgAttribs.Fill:
+                    fillColor = value;
+                    continue;
+                case SvgAttribs.FontFamily:
+                    fontFamily = value;
+                    continue;
+                default:
+                    break;
+            }
+
+            if (string.IsNullOrEmpty(value)) continue;
+
+            // this way we save checking for null in the remaining cases
 
             switch (attribName)
             {
                 case SvgAttribs.X:
-                    _ = float.TryParse(Value, out x);
+                    if (float.TryParse(value, out float tempX))
+                        x = tempX;
                     break;
                 case SvgAttribs.Y:
-                    _ = float.TryParse(Value, out y);
+                    if (float.TryParse(value, out float tempY))
+                        y = tempY;
                     break;
-                case SvgAttribs.Fill:
-                    fillColor = Value ?? fillColor;
-                    break;
-                case SvgAttribs.FontFamily:
-                    fontFamily = Value ?? fontFamily;
-                    break;
+
                 case SvgAttribs.FontSize:
-                    _ = float.TryParse(Value, out fontSize);
+                    if (float.TryParse(value, out float tempSize))
+                        fontSize = tempSize;
                     break;
                 case SvgAttribs.FontWeight:
-                    _ = int.TryParse(Value, out weight);
+                    if (int.TryParse(value, out int tempWeight))
+                        weight = tempWeight;
                     break;
             }
         }
+
+        return new PropertyContextArgs
+        {
+            FontColor = fillColor,
+            FontFace = fontFamily,
+            FontSize = fontSize,
+            FontWeight = weight,
+            X = x,
+            Y = y
+        };
+    }
+
+    public static DrawCallText ExtracTextCall(XmlElementNode node, PropertyContext ctx)
+    {
+        string text = string.Empty;
 
         if (node.Children.Count == 1)
         {
@@ -76,6 +108,14 @@ public sealed class XmlDrawCallExtractor
             }
         }
 
-        return new DrawCallText(text, x, y);
+        return new DrawCallText(
+            text,
+            ctx.X,
+            ctx.Y,
+            Color: ctx.FontColor,
+            Size: ctx.FontSize,
+            Weight: ctx.FontWeight,
+            FontFace: ctx.FontFace
+            );
     }
 }
