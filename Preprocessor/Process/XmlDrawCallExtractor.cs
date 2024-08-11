@@ -92,30 +92,4 @@ public static class XmlDrawCallExtractor
             Y = y
         };
     }
-
-    public static DrawCallText ExtracTextCall(XmlElementNode node, PropertyContext ctx)
-    {
-        string text = string.Empty;
-
-        if (node.Children.Count == 1)
-        {
-            var child = node.Children.First();
-
-            // only has a string as children
-            if (child is XmlElementText textChild)
-            {
-                text = textChild.Text;
-            }
-        }
-
-        return new DrawCallText(
-            text,
-            ctx.X,
-            ctx.Y,
-            Color: ctx.FontColor,
-            Size: ctx.FontSize,
-            Weight: ctx.FontWeight,
-            FontFace: ctx.FontFace
-            );
-    }
 }

@@ -1,21 +1,44 @@
 using Preprocessor.Parser;
+using Preprocessor.DrawCall;
+using Preprocessor.Render;
 
 namespace Preprocessor.Process;
 
-public abstract class BaseXmlVisitor {
 
-    public void Visit(XmlElementNode node) {
+public class XmlVisitor : IXmlVisitor
+{
 
-    }
+  private readonly List<DrawCall.DrawCall> calls = [];
 
+  public void VisitRect(XmlElementNode rect)
+  {
+  }
 
-    public abstract void VisitRoot(XmlElementNode node);
+  public void VisitRoot(XmlElementNode node)
+  {
+    calls.Add(new PageCall());
+  }
 
-    public abstract void VisitText(XmlElementNode node);
+  public void VisitString(XmlElementText textNode, PropertyContext ctx)
+  {
+    var textCall = new DrawCallText(
+            textNode.Text,
+            ctx.X,
+            ctx.Y,
+            Color: ctx.FontColor,
+            Size: ctx.FontSize,
+            Weight: ctx.FontWeight,
+            FontFace: ctx.FontFace
+          );
+    calls.Add(textCall);
+  }
 
-    public abstract void VisitTspan(XmlElementNode node);
+  public void VisitText(XmlElementNode node)
+  {
+  }
 
-    public abstract void VisitString(XmlElementText text);
-
-    public abstract void VisitRect(XmlElementNode rect);
+  public void VisitTspan(XmlElementNode node)
+  {
+  }
 }
+
