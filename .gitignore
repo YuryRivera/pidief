@@ -1,3 +1,8 @@
 .vscode
 bin
 obj
+
+# generated files by the project
+output
+template
+fonts

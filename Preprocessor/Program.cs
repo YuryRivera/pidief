@@ -37,7 +37,7 @@ static void DoSomething(XmlNode n, int level = 0)
     }
 }
 
-var stream = File.Create("test.pdf");
+var stream = File.Create(Path.Join("output", "test.pdf"));
 renderer.Save(stream);
 stream.Close();
 // tada
