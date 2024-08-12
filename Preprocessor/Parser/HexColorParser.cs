@@ -14,12 +14,19 @@ public static class ArgbMask
     public const int Alpha = 24;
 }
 
-public static class RgbaMask
+public static class RgbaChannel
 {
-    public const int Red = 24;
-    public const int Green = 16;
-    public const int Blue = 8;
-    public const int Alpha = 0;
+    public const int Red = 0;
+    public const int Green = 1;
+    public const int Blue = 2;
+    public const int Alpha = 3;
+}
+
+public static class ColorByte
+{
+    public const int RGBA = 4;
+    public const int ARGB = 4;
+    public const int RGB = 3;
 }
 
 public readonly struct ArgbColor(uint n)
@@ -58,19 +65,33 @@ public static partial class HexColorParser
 
     private static ArgbColor ParseColor(string colorText)
     {
-        uint value = uint.Parse(colorText[1..], NumberStyles.HexNumber);
-        int byteLocation = colorText.Length == ColorWithAlpha ? 24 : 16;
-
-        byte a = byte.MaxValue;
-        byte r = (byte)((value >> byteLocation) & byte.MaxValue);
-        byte g = (byte)((value >> byteLocation - 8) & byte.MaxValue);
-        byte b = (byte)((value >> byteLocation - 16) & byte.MaxValue);
-
-        if (colorText.Length == ColorWithAlpha)
+        const int BitColorBand = 8;
+        if (colorText.Length < ColorWithAlpha)
         {
-            a = (byte)(value & byte.MaxValue);
+            // adding alpha channel;
+            colorText += "ff";
         }
-        return new ArgbColor(value);
+
+        uint value = uint.Parse(colorText[1..], NumberStyles.HexNumber);
+        // R, G, B, A channels
+        byte[] colorBytes = [byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue];
+
+        for (int index = 0; index < ColorByte.RGBA; index++)
+        {
+            int loc = index * BitColorBand;
+            uint byteData = (value >> loc) & byte.MaxValue;
+            // -1 because of arrys index starts at zero 0
+            colorBytes[ColorByte.RGBA - index - 1] = (byte)byteData;
+        }
+
+        uint reorderedValue = (uint)(
+            colorBytes[RgbaChannel.Alpha] << ArgbMask.Alpha |
+            colorBytes[RgbaChannel.Red] << ArgbMask.Red |
+            colorBytes[RgbaChannel.Green] << ArgbMask.Green |
+            colorBytes[RgbaChannel.Blue] << ArgbMask.Blue
+        );
+
+        return new ArgbColor(reorderedValue);
     }
 
     public static ArgbColor ParseShorhand(string colorText)
@@ -88,7 +109,7 @@ public static partial class HexColorParser
         ? ComputeDuplicateHex(colorText[4])
         : byte.MaxValue;
 
-        uint value = (uint) (
+        uint value = (uint)(
             alpha << ArgbMask.Alpha |
             red << ArgbMask.Red |
             green << ArgbMask.Green |
