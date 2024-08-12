@@ -23,11 +23,12 @@ public class XmlVisitor : IXmlVisitor
 
   public void VisitString(XmlElementText textNode, PropertyContext ctx)
   {
+    _ = HexColorParser.TryParse("#47d", out ArgbColor parsedColor);
     var textCall = new DrawCallText(
             textNode.Text,
             ctx.X,
             ctx.Y,
-            Color: ctx.FontColor,
+            ArgbColor: parsedColor.Value,
             Size: ctx.FontSize,
             Weight: ctx.FontWeight,
             FontFace: ctx.FontFace

@@ -47,9 +47,10 @@ public sealed class PDFRenderer
     public void RenderText(DrawCallText tc) {
         var style = ComputeStyle(false, false);
         var font = new XFont("Poppins", tc.Size, style);
-         XColor customColor = XColor.FromArgb(128, 0, 128);
+         XColor customColor = XColor.FromArgb(tc.ArgbColor);
+         var brush = new XSolidBrush(customColor);
 
-        g.DrawString(tc.Text, font, XBrushes.Black, tc.X, tc.Y);
+        g.DrawString(tc.Text, font, brush, tc.X, tc.Y);
     }
 
     public static XFontStyleEx ComputeStyle(bool bold, bool italic) {

@@ -32,7 +32,7 @@ public sealed record DrawCallText (
   string Text,
   float X,
   float Y,
-  string Color,
+  uint ArgbColor,
   float Size,
   int Weight,
   string FontFace,
