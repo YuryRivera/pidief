@@ -1,3 +1,4 @@
+using System.Globalization;
 using Preprocessor.DrawCall;
 using Preprocessor.Parser;
 using Preprocessor.Render;
@@ -34,8 +35,8 @@ public static class XmlDrawCallExtractor
     {
         int? weight = null;
         float? x = null;
-        float y = 0;
-        float fontSize = 0;
+        float? y = null;
+        float? fontSize = null;
         string? fillColor = null;
         string? fontFamily = null;
 
@@ -72,7 +73,7 @@ public static class XmlDrawCallExtractor
                     break;
 
                 case SvgAttribs.FontSize:
-                    if (float.TryParse(value, out float tempSize))
+                    if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture,out float tempSize))
                         fontSize = tempSize;
                     break;
                 case SvgAttribs.FontWeight:

@@ -34,7 +34,11 @@ public sealed class PDFRenderer
     public void RenderPage(PageCall pc)
     {
         currentPage = doc.AddPage();
+        currentPage.Orientation = PdfSharp.PageOrientation.Landscape;
         currentPage.Size = PdfSharp.PageSize.A4;
+        var margins =  new TrimMargins();
+        margins.All = new XUnit(0, XGraphicsUnit.Millimeter);
+        currentPage.TrimMargins = margins;
         // currentPage.Width = new XUnit(pc.Width);
         // currentPage.Height = new XUnit(pc.Height);
         g = XGraphics.FromPdfPage(currentPage);
@@ -43,6 +47,7 @@ public sealed class PDFRenderer
     public void RenderText(DrawCallText tc) {
         var style = ComputeStyle(false, false);
         var font = new XFont("Poppins", tc.Size, style);
+         XColor customColor = XColor.FromArgb(128, 0, 128);
 
         g.DrawString(tc.Text, font, XBrushes.Black, tc.X, tc.Y);
     }
